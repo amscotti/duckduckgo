@@ -1,0 +1,24 @@
+{
+  "Abstract": "Crystal is a general-purpose, object-oriented programming language...",
+  "AbstractText": "Crystal is a general-purpose, object-oriented programming language...",
+  "AbstractSource": "Wikipedia",
+  "AbstractURL": "https://en.wikipedia.org/wiki/Crystal_(programming_language)",
+  "Image": "https://duckduckgo.com/i/crystal-lang.png",
+  "Heading": "Crystal (programming language)",
+  "Type": "A",
+  "Answer": "",
+  "AnswerType": "",
+  "Definition": "",
+  "DefinitionSource": "",
+  "DefinitionURL": "",
+  "Redirect": "",
+  "RelatedTopics": [
+    {
+      "FirstURL": "https://duckduckgo.com/Ruby_(programming_language)",
+      "Text": "Ruby (programming language) - A dynamic, open source programming language...",
+      "Result": "<a href=\"...\">Ruby</a>...",
+      "Icon": {"URL": "https://duckduckgo.com/i/ruby.png", "Height": 16, "Width": 16}
+    }
+  ],
+  "Results": []
+}

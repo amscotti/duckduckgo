@@ -1,0 +1,155 @@
+# DuckDuckGo Crystal Library
+
+> A Crystal library for the DuckDuckGo Instant Answer API. Provides type-safe access to topic summaries, definitions, disambiguation pages, !bang redirects, and instant answers (calculations, IP lookups, etc.). Zero external dependencies.
+
+## Quick Start
+
+```crystal
+require "duckduckgo"
+
+# Simplest: get the best answer in one line
+puts DuckDuckGo.zci("Crystal programming language")
+# => "Crystal is a general-purpose, object-oriented programming language..."
+
+# Full query for more control
+result = DuckDuckGo.query("Crystal programming language")
+puts result.abstract_text   # Topic summary
+puts result.type            # ResponseType::Article
+
+# Instant answers
+puts DuckDuckGo.zci("what is my ip")  # => "Your IP address is..."
+
+# !Bang redirects
+result = DuckDuckGo.query("!imdb matrix", no_redirect: true)
+puts result.redirect        # URL to IMDB
+```
+
+## Core API
+
+### Module Methods
+
+- `DuckDuckGo.zci(query)` - Get the best single text answer (zero-click info)
+- `DuckDuckGo.query(query, no_redirect: false, no_html: false, skip_disambig: false)` - Full query returning InstantAnswer
+- `DuckDuckGo.secure_query(...)` - Query using HTTPS
+- `DuckDuckGo.configure { |config| ... }` - Configure the default client
+- `DuckDuckGo.client` - Access the default client instance
+
+### Query Parameters
+
+- `no_redirect: true` - Return !bang redirect URLs instead of following them
+- `no_html: true` - Strip HTML from response text
+- `skip_disambig: true` - Skip disambiguation pages, return first result
+
+### Configuration Options
+
+```crystal
+DuckDuckGo.configure do |config|
+  config.secure = true              # Use HTTPS (default: true)
+  config.user_agent = "MyApp/1.0"   # Custom User-Agent header
+  config.timeout = 30.seconds       # HTTP timeout
+  config.app_name = "my_app"        # Sent as 't' parameter for analytics
+end
+```
+
+## Response Types
+
+### InstantAnswer (main response struct)
+
+Key fields:
+- `heading` - Topic name/title
+- `abstract_text` - Plain text summary
+- `abstract_source` - Source name (e.g., "Wikipedia")
+- `abstract_url` - Link to source
+- `answer` - Instant answer text (calculations, IP, etc.)
+- `definition` - Dictionary definition
+- `redirect` - !Bang redirect URL
+- `image` - Associated image URL
+- `related_topics` - Array of related topics
+- `results` - External links (rare)
+
+Key methods:
+- `zci` - Get the best single text answer from this result
+- `type` - Returns `ResponseType` enum
+- `answer_type` - Returns `AnswerType` enum
+- `article?`, `disambiguation?`, `category?` - Type checks
+- `instant_answer?` - Has instant answer
+- `redirect?` - Is !bang redirect
+- `has_results?` - Has any results
+- `flat_related_topics` - Flattened array of all related topics
+- `topic_groups` - Grouped topics (for disambiguation)
+
+### ResponseType Enum
+
+- `Article` (A) - Topic with abstract
+- `Disambiguation` (D) - Multiple meanings
+- `Category` (C) - List of items
+- `Name` (N) - Person/entity
+- `Exclusive` (E) - Instant answer only
+- `None` - No results or redirect
+
+### AnswerType Enum
+
+`Calc`, `Color`, `Digest`, `Info`, `IP`, `IPLoc`, `Phone`, `Password`, `Random`, `Regexp`, `Unicode`, `UPC`, `Zip`, `Other`, `None`
+
+## Testing
+
+Use `MockAdapter` to test without real API calls:
+
+```crystal
+mock = DuckDuckGo::HTTP::MockAdapter.new
+mock.stub(/api\.duckduckgo\.com/, 200, json_response)
+
+client = DuckDuckGo::Client.new(adapter: mock)
+result = client.query("test")
+
+# Check recorded requests
+mock.requests        # All requests made
+mock.last_request    # Most recent request
+mock.requested?(/pattern/)  # Check if URL was called
+mock.reset           # Clear stubs and requests
+```
+
+## Error Handling
+
+```crystal
+begin
+  result = DuckDuckGo.query("test")
+rescue DuckDuckGo::ConnectionError
+  # Network/connection failure
+rescue DuckDuckGo::APIError
+  # Non-2xx HTTP response (check .status_code)
+rescue DuckDuckGo::ParseError
+  # Invalid JSON response (check .body)
+end
+```
+
+## Architecture
+
+```
+DuckDuckGo (module)
+├── Client - Makes API requests
+├── Config - Configuration options
+├── Params - Query parameters
+├── HTTP::Adapter (abstract) - HTTP interface
+│   ├── DefaultAdapter - Production HTTP client
+│   └── MockAdapter - Testing stub
+└── Types
+    ├── InstantAnswer - Main response
+    ├── Result - Related topic/result
+    ├── TopicGroup - Grouped topics
+    └── Icon - Icon metadata
+```
+
+## API Limitations
+
+The DuckDuckGo Instant Answer API provides:
+- Topic summaries (Wikipedia-style)
+- Dictionary definitions
+- Disambiguation pages
+- Instant answers (calculations, IP, passwords, etc.)
+- !Bang redirect URLs
+
+Does NOT provide:
+- Full web search results
+- Image/video/news search
+- Pagination or result counts

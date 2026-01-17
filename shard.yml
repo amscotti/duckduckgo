@@ -1,0 +1,21 @@
+name: duckduckgo
+version: 0.1.0
+
+description: |
+  Crystal library for the DuckDuckGo Instant Answer API.
+  Get topic summaries, definitions, instant answers, and more.
+
+authors:
+  - Anthony Scotti <anthony.m.scotti@gmail.com>
+
+repository: https://github.com/amscotti/duckduckgo
+homepage: https://github.com/amscotti/duckduckgo
+
+crystal: '>= 1.0.0'
+
+license: MIT
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 1.6

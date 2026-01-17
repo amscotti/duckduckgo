@@ -1,0 +1,24 @@
+{
+  "Abstract": "",
+  "AbstractText": "",
+  "Heading": "Apple",
+  "Type": "D",
+  "RelatedTopics": [
+    {
+      "Name": "Companies",
+      "Topics": [
+        {
+          "FirstURL": "https://duckduckgo.com/Apple_Inc.",
+          "Text": "Apple Inc. - An American multinational technology company...",
+          "Icon": {"URL": "", "Height": "", "Width": ""}
+        }
+      ]
+    },
+    {
+      "FirstURL": "https://duckduckgo.com/Apple",
+      "Text": "Apple - A fruit produced by an apple tree...",
+      "Icon": {"URL": "https://duckduckgo.com/i/apple.png", "Height": 16, "Width": 16}
+    }
+  ],
+  "Results": []
+}
